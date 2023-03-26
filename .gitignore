@@ -1,0 +1,7 @@
+__pycache__
+
+/dist/
+/.direnv
+/result
+/.venv/
+/_build/

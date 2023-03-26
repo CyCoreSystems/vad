@@ -1,0 +1,6 @@
+colorama
+numpy
+pyaudio
+soundfile
+torch
+torchaudio

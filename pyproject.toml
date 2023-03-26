@@ -1,0 +1,43 @@
+[build-system]
+requires = [
+   "hatchling",
+   "colorama",
+   "numpy",
+   "pyaudio",
+   "soundfile",
+   "torch",
+   "torchaudio",
+]
+build-backend = "hatchling.build"
+
+[project]
+name = "vad"
+version = "0.1.0"
+authors = [
+   {name = "Seán C McCord", email = "ulexus@gmail.com"},
+]
+description = "VAD voice activity detector"
+readme = "README.md"
+requires-python = ">=3.9"
+keywords = ["vad", "voice", "voip"]
+license = {text = "Apache 2.0"}
+classifiers = [
+   "Programming Language :: Python :: 3",
+   "Operating System :: OS Independent",
+]
+dependencies = [
+]
+
+[project.urls]
+homepage = "https://github.com/CyCoreSystems/vad"
+repository = "https://github.com/CyCoreSystems/vad"
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+   "_build",
+   ".direnv",
+   "dist",
+   ".git",
+   "result",
+   ".venv",
+]
