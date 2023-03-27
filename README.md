@@ -18,6 +18,6 @@ is during the same telephone conversation.
 Samples may be tested with `ffmpeg` and `nc`, like so:
 
 ```sh
-$ fmpeg -hide_banner -loglevel error -re -i test.wav -f s16le - | nc localhost 3030 |hexdump
+$ ffmpeg -hide_banner -loglevel error -re -i test.wav -f s16le - | nc localhost 3030 |hexdump
 ```
 
