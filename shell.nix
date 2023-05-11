@@ -3,6 +3,7 @@ let
 in pkgs.mkShell rec {
   buildInputs = [
     pkgs.ffmpeg
+    pkgs.libxcrypt
     pkgs.netcat
     pkgs.hatch
     pkgs.python3
@@ -19,7 +20,7 @@ in pkgs.mkShell rec {
     export PYTHONPATH="$PIP_PREFIX/${pkgs.python3.sitePackages}:$PYTHONPATH"
     export PATH="$PIP_PREFIX/bin:$PATH"
     unset SOURCE_DATE_EPOCH
-    python -m venv
+    python -m venv .venv
     source .venv/bin/activate
     pip install -r requirements.txt
   '';

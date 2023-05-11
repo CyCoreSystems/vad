@@ -39,7 +39,9 @@ class SileroProcessor(socketserver.BaseRequestHandler):
         FORMAT = pyaudio.paInt16
         CHANNELS = 1
         SAMPLE_RATE = 8000
-        CHUNK = 1600 # 10 frames of 160 bytes each
+
+        # Silero VAD is trained on 256, 512, and 768 sample sizes, for 8kHz audio
+        CHUNK = 768 * 2 # 768 samples * 2 bytes
         
         # load Silero model
         model, utils = torch.hub.load(repo_or_dir='./silero',
@@ -53,24 +55,28 @@ class SileroProcessor(socketserver.BaseRequestHandler):
          VADIterator,
          collect_chunks) = utils
 
+        audio_buf = bytearray()
+
         while True:
-            try:
-                audio_chunk = self.request.recv(CHUNK)
-            except:
-                print('connection closed')
-                break
+            while len(audio_buf) < CHUNK:
+                try:
+                    data = self.request.recv(CHUNK-len(audio_buf))
+                    if not data:
+                        print('no data received; closing socket')
+                        self.request.close()
+                        return
+                    audio_buf += data
+                except Exception as e:
+                    print('exception from socket: '+ str(e))
+                    self.request.close()
+                    return
 
-            if not audio_chunk:
-                print('connection closed')
-                break
-
-            if len(audio_chunk) < CHUNK:
-                #print('ignoring short data')
+            if len(audio_buf) < CHUNK:
+                print('ignoring short data')
                 continue
 
             #import pdb; pdb.set_trace()
-            
-            audio_int16 = np.frombuffer(audio_chunk, np.int16);
+            audio_int16 = np.frombuffer(audio_buf, np.int16);
             
             audio_float32 = int2float(audio_int16)
             
@@ -79,6 +85,8 @@ class SileroProcessor(socketserver.BaseRequestHandler):
             confidenceByte = int((new_confidence) * 0xff).to_bytes(1, "little")
 
             self.request.send(confidenceByte)
+
+            audio_buf = bytes()
 
             if DEBUG:
                 if new_confidence > 0.97:
